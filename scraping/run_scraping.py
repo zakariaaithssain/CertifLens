@@ -16,3 +16,5 @@ def run_scraping(state = None, progress = None):  #those are streamlit interface
         print(f'Error while scraping: {e}')
         if state is not None:  return False
 
+if __name__ == "__main__": 
+    run_scraping()
