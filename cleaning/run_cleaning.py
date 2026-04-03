@@ -64,6 +64,9 @@ def run_cleaning(state=None, progress=None): #those are streamlit interface rela
             return False
 
 
+if __name__ == "__main__": 
+    run_cleaning()
+
 
 
 
