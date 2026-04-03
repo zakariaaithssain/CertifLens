@@ -80,3 +80,8 @@ def run_predicting(state = None, progress = None): #those are st related argumen
         if state is not None: state.success("Missing values predicted successfully!")
     except Exception as e:
         if state is not None: state.error(f"An error has occured while predicting: {e}. Please try again!")
+
+
+
+if __name__ == "__main__":
+    run_predicting()
