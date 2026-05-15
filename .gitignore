@@ -1,9 +1,5 @@
 .idea/
 .venv/
 __pycache__/
-cleaning/__pycache__/
-analysis/__pycache__/
-pruning/__pycache__/
-scraping/__pycache__/
-.idea/
-data/ 
+data/
+*.egg-info
