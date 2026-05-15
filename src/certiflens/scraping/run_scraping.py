@@ -1,4 +1,5 @@
-from scrapers import CompTIA, AWS, Microsoft
+from .scrapers import CompTIA, AWS, Microsoft
+from ..paths import get_raw_file_path
 
 def run_scraping(state = None, progress = None):  #those are streamlit interface related arguments
     try:
@@ -7,7 +8,7 @@ def run_scraping(state = None, progress = None):  #those are streamlit interface
             if state is not None: state.text(f"Scraping {site.name}...")
             print(f'Scraping {site.name}...')
             site.scraper()
-            site.save_to_json(fr'C:\Users\zakar\OneDrive\Bureau\PFA\raw_{site.name}_certifications.json')
+            site.save_to_json(str(get_raw_file_path(site.name)))
             if progress is not None: progress.progress((i+1)/3)
         else:
             print('Scraping Finished Successfully')

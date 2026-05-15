@@ -1,18 +1,18 @@
-from imputing.imputer import MissingColumnsPredictor
+from .imputer import MissingColumnsPredictor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeClassifier
+from ..paths import (
+    get_pre_predictions_data_path,
+    get_post_predictions_data_path,
+)
 
 import pandas as pd
 
-df = pd.read_csv(r"C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\post_predictions_data.csv")
-print(df.describe())
-print(df.info())
-print(df.columns)
 #we should predict the missing domains and levels first and save them to the dataframe, before predicting the cost and duration.
 def run_predicting(state = None, progress = None): #those are st related arguments.
     try:
-        data = pd.read_csv(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\pre_predictions_data.csv')
+        data = pd.read_csv(str(get_pre_predictions_data_path()))
         useful_columns = data.loc[: , ['Provider', 'Domain', 'Level', 'Cost (USD)', 'Exam Duration (min)']]
         #########################################Level Prediction####################################################
         print('Predicting Missing Levels with DTC...')
@@ -76,7 +76,7 @@ def run_predicting(state = None, progress = None): #those are st related argumen
         data.loc[data['Exam Duration (min)'] == 0, 'Exam Duration (min)'] = predicted_duration.astype('int64')
 
         #this is the final data, at least with the provider, domain, level, cost, and duration with no missing values.
-        data.to_csv(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data/post_predictions_data.csv', index= False)
+        data.to_csv(str(get_post_predictions_data_path()), index= False)
         if state is not None: state.success("Missing values predicted successfully!")
     except Exception as e:
         if state is not None: state.error(f"An error has occured while predicting: {e}. Please try again!")

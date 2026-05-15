@@ -1,12 +1,17 @@
 import pandas as pd
 import time as t
 
-from cleaning.cleaners import ComptiaCleaner, AWSCleaner, MicrosoftCleaner, FinalDataCleaner
+from .cleaners import ComptiaCleaner, AWSCleaner, MicrosoftCleaner, FinalDataCleaner
+from ..paths import (
+    get_raw_file_path,
+    get_raw_final_data_path,
+    get_pre_predictions_data_path,
+)
 
 def run_cleaning(state=None, progress=None): #those are streamlit interface related arguments
     try:
-        cleaners = [ComptiaCleaner(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\raw\raw_CompTIA_certifications.json'), AWSCleaner(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\raw\raw_AWS_certifications.json'),
-                    MicrosoftCleaner(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\raw\raw_Microsoft_certifications.json')]
+        cleaners = [ComptiaCleaner(str(get_raw_file_path('CompTIA'))), AWSCleaner(str(get_raw_file_path('AWS'))),
+                    MicrosoftCleaner(str(get_raw_file_path('Microsoft')))]
         certifs = []
         step = 1
         for cleaner in cleaners:
@@ -32,11 +37,11 @@ def run_cleaning(state=None, progress=None): #those are streamlit interface rela
 
         if state is not None: state.text("Concatenating cleaned data...")
         raw_final = pd.concat(certifs, ignore_index= True, join= 'outer') # shape = (114,22)
-        raw_final.to_json(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\raw\raw_final_data.json', orient = 'records', indent = 2)
+        raw_final.to_json(str(get_raw_final_data_path()), orient = 'records', indent = 2)
         print('Before cleaning: ', raw_final.shape)
 
         if state is not None: state.text("Calling the final cleaner...")
-        final_cleaner = FinalDataCleaner(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\raw\raw_final_data.json')
+        final_cleaner = FinalDataCleaner(str(get_raw_final_data_path()))
         final_data = (final_cleaner
                       .drop_missing_name_rows()
                       .drop_duplicate_certifications()
@@ -52,7 +57,7 @@ def run_cleaning(state=None, progress=None): #those are streamlit interface rela
                       .final_touches()
                       .get_data())
 
-        final_data.to_csv(r'C:\Users\zakar\OneDrive\Bureau\PFA\it_certifications_project\data\pre_predictions_data.csv', index= False)
+        final_data.to_csv(str(get_pre_predictions_data_path()), index= False)
         print(final_data.shape)
         if state is not None:
             state.empty()
